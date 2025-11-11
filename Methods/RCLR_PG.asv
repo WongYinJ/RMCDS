@@ -1,0 +1,29 @@
+func    tion [L,S] = RCLR(X,Y,Omega,ksize,lambda,mu,MaxLoop,tol)
+%RCLR 此处显示有关此函数的摘要
+%   此处显示详细说明
+%% Preparation
+isize=size(Y);
+L=Y;S=zeros(size(Y));
+cri=[];ps=[];
+%%  Main Loop
+for loop=1:MaxLoop
+    Laux=L-Omega.*(L+S-Y);
+    Saux=S-Omega.*(L+S-Y);
+    %Update L
+    Lpre=L;
+    L=inexact_alm_cnm_2D(Laux, logical(ones(size(Y))),  ksize, mu);
+    %Update S
+    Spre=S;
+    S=soft(Saux,lambda/(mu*prod(ksize)));
+    
+    
+    cri=[cri;norm(Lpre-L),norm(Spre-S)];
+    ps=[ps;psnr(L,X)];
+    cri(end)
+    ps(end)
+    if max(cri(end,:)) <= tol
+        break
+    end
+end
+x e nd
+
